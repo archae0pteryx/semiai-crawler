@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
+import colors from 'colors';
 
 export const absDataPath = () => {
   const targetRootDir = path.join(__dirname, process.env.DATA_DIR || 'data')
@@ -13,6 +14,7 @@ export const pathFromUrl = (url: string) => {
   const hostname = urlObj.hostname
   const pathname = urlObj.pathname
   const actualPath = `${targetRootDir}/${hostname}${pathname}`
+
   if (actualPath.endsWith('/')) {
     return actualPath + 'index.html'
   }
@@ -42,13 +44,6 @@ export const allFilesFromUrl = (url: string): string[] => {
   return allFilesArr
 }
 
-// export const filenameFromUrl = (url: string): string => {
-//   const urlObj = new URL(url)
-//   const segments = urlObj.pathname.split('/')
-//   const filename = segments.pop() || 'index.html'
-//   return filename
-// }
-
 export const dirFromUrl = (url: string): string => {
   const filename = pathFromUrl(url)
   const split = filename.split('/')
@@ -76,7 +71,19 @@ export const writeLocalHtml = (url: string, content: string) => {
 }
 
 export const loadFromLocal = (url: string) => {
-  const path = pathFromUrl(url)
-  return fs.readFileSync(path, 'utf8')
+  try {
+    const path = pathFromUrl(url)
+    return fs.readFileSync(path, 'utf8')
+  } catch (err) {
+    console.error(colors.red(`Failed to load from local: ${url}`))
+    return ''
+  }
 }
 
+export const writeLog = (content: string) => {
+  const logFile = process.env.LOG_FILE
+  if (logFile) {
+    const targetRootDir = absDataPath()
+    fs.appendFileSync(`${targetRootDir}/${logFile}`, content)
+  }
+}

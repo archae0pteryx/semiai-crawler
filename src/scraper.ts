@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer'
 import { DESKTOP_USER_AGENTS } from './uas'
-import { loadFromLocal, pathFromUrl, writeLocalHtml, allFilesFromUrl } from './file_io';
+import { loadFromLocal, pathFromUrl, writeLocalHtml, allFilesFromUrl, writeLog } from './file_io';
 import { extractLinksFromHtml } from './urls'
 import colors from 'colors'
 
@@ -29,12 +29,11 @@ export const scrape = async (initialUrl: string) => {
     const href = QUEUE.values().next().value
     QUEUE.delete(href)
 
+    // const target = colors.blue(`[target]: ...${href.slice(-20)}`)
+    // const queue = colors.grey(`[queue]: ${QUEUE.size}`)
+    // const seen = colors.grey(`[seen]: ${SEEN.size}`)
 
-    const target = colors.blue(`[target]: ...${href.slice(-20)}`)
-    const queue = colors.grey(`[queue]: ${QUEUE.size}`)
-    const seen = colors.grey(`[seen]: ${SEEN.size}`)
-
-    console.log(`${target} ${queue} ${seen}`)
+    // console.log(`${target} ${queue} ${seen}`)
 
     const localFilePath = pathFromUrl(href)
     const alreadyHave = SEEN.has(localFilePath)
@@ -48,6 +47,7 @@ export const scrape = async (initialUrl: string) => {
     }
 
     try {
+      console.log(colors.blue(`[target]: ${colors.underline(href)}`))
       await page.goto(href, { waitUntil: 'networkidle0' })
 
       const html = await page.content()
@@ -64,6 +64,7 @@ export const scrape = async (initialUrl: string) => {
       SEEN.add(localFilePath)
     } finally {
       count++
+      writeLog(`${href}\n`)
     }
   }
   const endTime = new Date()
