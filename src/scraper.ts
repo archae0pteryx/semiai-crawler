@@ -1,6 +1,5 @@
 import puppeteer from 'puppeteer'
 import { DESKTOP_USER_AGENTS } from './uas'
-import fs from 'fs'
 import { alreadyHaveHtml } from './check'
 import { writeLocalHtml } from './file_io'
 import { extractLinksFromHtml } from './urls'

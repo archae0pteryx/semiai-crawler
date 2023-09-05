@@ -20,16 +20,11 @@ export const listAllFilesInDir = (dir: string): string[] => {
 
 export const alreadyHaveHtml = (url: string) => {
   const localFile = pathFromUrl(url)
-  console.log(localFile)
   const searchDir = localFile.split('/').slice(0, -1).join('/')
   const allFilesArr = listAllFilesInDir(searchDir)
   const fileSet = new Set(allFilesArr)
   const seen = fileSet.has(localFile)
   return seen
-}
-
-export const removeSeenFilesFromQueue = (queue: string[], seen: Set<string>) => {
-  return queue.filter((url) => !seen.has(filenameFromUrl(url))) || []
 }
 
 export const filenameFromUrl = (url: string): string => {

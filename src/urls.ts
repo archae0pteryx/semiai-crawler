@@ -1,12 +1,11 @@
 import * as cheerio from 'cheerio'
 
-
 export const extractLinksFromHtml = (url: string, html: string) => {
   const hostname = new URL(url).hostname
   const allHref = allHrefs(html)
   const unique = [...new Set(allHref)]
   const allWithoutDomain = unique.filter((href) => !hasDomain(href))
-  const allWithDomain = unique.filter((href) => hasDomain(href))
+  const allWithDomain = unique.filter(hasDomain)
   const allWithDomainAndGoodHost = allWithDomain.filter(
     (href) => isValidHref(href) && new URL(href).hostname === hostname
   )
@@ -14,7 +13,6 @@ export const extractLinksFromHtml = (url: string, html: string) => {
   const strippedHrefs = allToStrip.map(removeHostAndProtocol)
   const filtered = strippedHrefs.filter((href) => href !== '/' && !href.includes('#'))
   const list = filtered.map((href) => `https://${hostname}${href}`)
-  console.log(`links in html: ${list.length}`)
   return list
 }
 

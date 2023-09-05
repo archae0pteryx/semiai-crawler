@@ -14,21 +14,6 @@ const html = `
 </body>
 </html>
 `
-/*
-9 good
-4 bad
-*/
-const HREF_LIST = [
-  'link/without/front/slash', // good
-  '/link/with/front/slash', // good
-  'https://good.host/regular/link', //good
-  'http://good.host/http/link', //good
-  'https://good.host', // good
-  'http://bad.host/http/link', // bad
-  'https://bad.host/regular/link', // bad
-  'https://good.host/link/with#hash', //bad
-  'https://bad.host/link/with#hash', // bad
-]
 
 const GOOD_HOST = 'https://good.host/with/path'
 
