@@ -13,7 +13,7 @@ export const extractLinksFromHtml = (url: string, html: string) => {
   const strippedHrefs = allToStrip.map(removeHostAndProtocol)
   const filtered = strippedHrefs.filter((href) => href !== '/' && !href.includes('#'))
   const list = filtered.map((href) => `https://${hostname}${href}`)
-  return list
+  return new Set(list)
 }
 
 export const hasDomain = (href: string) => {

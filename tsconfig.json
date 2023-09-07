@@ -3,14 +3,17 @@
     "src/**/*.ts"
   ],
   "exclude": [
-    "**/tmp/**/*"
+    "**/tmp/**/*",
+    "**/__tests__/**/*",
   ],
   "compilerOptions": {
     "target": "es2016",
-    "module": "commonjs",
+    "module": "NodeNext",
     "esModuleInterop": true,
     "strict": true,
-    "noImplicitAny": true,
-    "skipLibCheck": true
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "rootDir": "src",
   }
 }

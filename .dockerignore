@@ -1,0 +1,8 @@
+node_modules
+data
+.vscode
+tmp
+.env
+jest.config.js
+*.test*
+.git

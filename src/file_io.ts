@@ -1,7 +1,7 @@
+import { execSync } from 'child_process'
+import colors from 'colors'
 import fs from 'fs'
 import path from 'path'
-import { execSync } from 'child_process'
-import colors from 'colors';
 
 export const absDataPath = () => {
   const targetRootDir = path.join(__dirname, process.env.DATA_DIR || 'data')
@@ -28,9 +28,9 @@ export const pathFromUrl = (url: string) => {
 
 export const listAllFilesInDir = (dir: string): string[] => {
   try {
-      const command = `find ${dir} -type f`
-      const currentFiles = execSync(command).toString().trim().split('\n')
-      return currentFiles
+    const command = `find ${dir} -type f`
+    const currentFiles = execSync(command).toString().trim().split('\n')
+    return currentFiles
   } catch (err: any) {
     console.log('Directory not found or empty. continuing...')
     return []
@@ -68,6 +68,7 @@ export const writeLocalHtml = (url: string, content: string) => {
     })
   }
   fs.writeFileSync(path, content)
+  console.log(colors.green(`[wrote]: ${path}`))
 }
 
 export const loadFromLocal = (url: string) => {
@@ -80,10 +81,36 @@ export const loadFromLocal = (url: string) => {
   }
 }
 
-export const writeLog = (content: string) => {
+const COLORS = {
+  grey: colors.grey,
+  red: colors.red,
+  yellow: colors.yellow,
+  green: colors.green,
+  blue: colors.blue,
+}
+
+interface ILogArgs {
+  color?: keyof typeof COLORS
+  msg: string
+  content?: string
+}
+
+export const log = ({ color = 'grey', msg, content }: ILogArgs) => {
   const logFile = process.env.LOG_FILE
-  if (logFile) {
-    const targetRootDir = absDataPath()
-    fs.appendFileSync(`${targetRootDir}/${logFile}`, content)
+  if (logFile && content) {
+    fs.appendFileSync(logFile, `${content}\n`)
+  }
+  if (process.env.LOG_LEVEL === 'debug') {
+    console.info(COLORS[color](msg))
+  }
+}
+
+export const error = ({ color = 'red', msg, content }: ILogArgs) => {
+  const errorLogFile = process.env.ERROR_LOG_FILE
+  if (errorLogFile && content) {
+    fs.appendFileSync(errorLogFile, `${content}\n`)
+  }
+  if (process.env.LOG_LEVEL === 'debug') {
+    console.error(COLORS[color](msg))
   }
 }
