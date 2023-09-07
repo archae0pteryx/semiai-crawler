@@ -93,24 +93,25 @@ interface ILogArgs {
   color?: keyof typeof COLORS
   msg: string
   content?: string
+  force?: boolean
 }
 
-export const log = ({ color = 'grey', msg, content }: ILogArgs) => {
+export const log = ({ color = 'grey', msg, content, force }: ILogArgs) => {
   const logFile = process.env.LOG_FILE
   if (logFile && content) {
     fs.appendFileSync(logFile, `${content}\n`)
   }
-  if (process.env.LOG_LEVEL === 'debug') {
+  if (process.env.LOG_LEVEL === 'debug' || force) {
     console.info(COLORS[color](msg))
   }
 }
 
-export const error = ({ color = 'red', msg, content }: ILogArgs) => {
+export const error = ({ color = 'red', msg, content, force }: ILogArgs) => {
   const errorLogFile = process.env.ERROR_LOG_FILE
   if (errorLogFile && content) {
     fs.appendFileSync(errorLogFile, `${content}\n`)
   }
-  if (process.env.LOG_LEVEL === 'debug') {
+  if (process.env.LOG_LEVEL === 'debug' || force) {
     console.error(COLORS[color](msg))
   }
 }

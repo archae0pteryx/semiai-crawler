@@ -90,6 +90,6 @@ export const scrape = async (initialUrl: string) => {
   const endTime = new Date()
   const timeDiff = endTime.getTime() - now.getTime()
   const seconds = timeDiff / 1000
-  console.log(colors.green(`Took ${seconds} seconds`))
+  log({ msg: `Time elapsed: ${seconds} seconds`, color: 'green', force: true })
   await browser.close()
 }
