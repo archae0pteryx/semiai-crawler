@@ -1,5 +1,5 @@
 {
-  "name": "semi-scraper",
+  "name": "semiai-crawler",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -9,8 +9,9 @@
     "start": "node dist/run.js",
     "clean": "rm -rf dist",
     "build:clean": "npm run clean && npm run build",
-    "build:docker": "docker build -t archae0pteryx/scraper .",
+    "build:docker": "docker build -t archae0pteryx/crawler .",
     "test": "jest src",
+    "test:coverage": "jest ./src --coverage",
     "test:watch": "jest --watch"
   },
   "keywords": [],

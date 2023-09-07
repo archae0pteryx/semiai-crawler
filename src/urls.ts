@@ -1,19 +1,50 @@
 import * as cheerio from 'cheerio'
+import { ICrawlerConfig } from './config'
 
-export const extractLinksFromHtml = (url: string, html: string) => {
-  const hostname = new URL(url).hostname
-  const allHref = allHrefs(html)
-  const unique = [...new Set(allHref)]
-  const allWithoutDomain = unique.filter((href) => !hasDomain(href))
-  const allWithDomain = unique.filter(hasDomain)
-  const allWithDomainAndGoodHost = allWithDomain.filter(
-    (href) => isValidHref(href) && new URL(href).hostname === hostname
-  )
-  const allToStrip = [...allWithoutDomain, ...allWithDomainAndGoodHost]
-  const strippedHrefs = allToStrip.map(removeHostAndProtocol)
-  const filtered = strippedHrefs.filter((href) => href !== '/' && !href.includes('#'))
-  const list = filtered.map((href) => `https://${hostname}${href}`)
-  return new Set(list)
+export const stripProtocolAndSanitize = (href: string, hostname: string) => {
+  if (isValidHref(href)) {
+    return href.replace(/^(https?:)?\/\//, '')
+  }
+
+  if (href.startsWith('/')) {
+    return `${hostname}${href}`
+  }
+
+  return `${hostname}/${href}`
+}
+
+export const extractTargetsFromHrefs = (hrefs: Set<string>, config: ICrawlerConfig): Set<string> => {
+  if (config.targets.length === 0) {
+    return hrefs
+  }
+  const regexes = config.targets.map((pattern) => new RegExp(pattern))
+  const matchedTargets = [...hrefs].filter((str) => regexes.some((regex) => regex.test(str)))
+  return new Set(matchedTargets)
+}
+
+export const filteredHrefsWithoutProtocol = (currentUrl: string, html: string, config: ICrawlerConfig): Set<string> => {
+  const rootHostname = new URL(currentUrl).hostname
+  const allowedHostnames = [...config.allowed_hosts, rootHostname]
+  const allUniqueHrefs = [...new Set(allHrefs(html))]
+  const strippedHrefs = allUniqueHrefs
+    .map((href) => stripProtocolAndSanitize(href, rootHostname))
+    .filter((h) => !h.includes('#'))
+    .filter((h) => allowedHostnames.some((a) => h.includes(a)))
+
+  return new Set(strippedHrefs)
+}
+
+export const extractTargets = (currentHref: string, html: string, config: ICrawlerConfig): Set<string> => {
+  const filtered = filteredHrefsWithoutProtocol(currentHref, html, config)
+  const targeted = extractTargetsFromHrefs(filtered, config)
+  return targeted
+}
+
+export const extractLinksFromHtml = (currentHref: string, html: string, config: ICrawlerConfig): Set<string> => {
+  const allUniqueHrefs = [...new Set(allHrefs(html))]
+  const targets = extractTargets(currentHref, html, config)
+
+  return new Set([...targets].map((t) => `https://${t}`))
 }
 
 export const hasDomain = (href: string) => {
@@ -29,7 +60,7 @@ export const isValidHref = (href: string) => {
   }
 }
 
-export const allHrefs = (html: string) => {
+export const allHrefs = (html: string): string[] => {
   const $ = cheerio.load(html)
 
   const allHref = $('a')

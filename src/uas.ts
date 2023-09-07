@@ -1,4 +1,29 @@
-export const DESKTOP_USER_AGENTS = [
+
+interface IUA {
+  ident: string
+  screenSize: {
+    width: number
+    height: number
+  }
+}
+
+export const getUserAgent = (type: 'desktop' | 'mobile' = 'desktop'): IUA => {
+  if (type === 'mobile') {
+    throw new Error('Need to implement mobile screen sizes')
+  }
+  return {
+    ident: randomElement(DESKTOP_USER_AGENTS),
+    screenSize: { width: 1920, height: 1080 },
+  }
+}
+
+export const randomElement = (arr: string[]): string => {
+  const randomIndex = Math.floor(Math.random() * arr.length)
+  return arr[randomIndex]
+}
+
+
+const DESKTOP_USER_AGENTS = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.62',
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
@@ -6,7 +31,8 @@ export const DESKTOP_USER_AGENTS = [
   'Mozilla/5.0 (X11; Linux i686; rv:109.0) Gecko/20100101 Firefox/116.0',
 ]
 
-export const MOBILE_USER_AGENTS = [
+// @ts-ignore
+const MOBILE_USER_AGENTS = [
   'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/116.0.5845.118 Mobile/15E148 Safari/604.1',
   'Mozilla/5.0 (iPad; CPU OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1',
   'Mozilla/5.0 (iPad; CPU OS 13_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/116.0 Mobile/15E148 Safari/605.1.15',

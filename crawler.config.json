@@ -1,0 +1,14 @@
+{
+  "targets": [
+    ".*lq.mp3",
+    ".*.txt"
+  ],
+  "follow": false,
+  "max_filesize": "1M",
+  "depth": 10,
+  "url": "https://www.grc.com/securitynow.htm",
+  "data_dir": "./data",
+  "stdout_log": "tmp/stdout.log",
+  "stderr_log": "tmp/stderr.log",
+  "debug": true
+}
